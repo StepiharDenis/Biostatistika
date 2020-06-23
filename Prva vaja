@@ -1,0 +1,113 @@
+#preimenovanje
+
+aa<-apodemus_popravljeno_n173
+
+#pregled podatkov 
+aa
+dim(aa)
+
+#opisna
+summary(aa)
+summary(aa$rol)
+
+mean(aa$rol)
+sd(aa$rol)
+
+#vrtilne tabele
+tapply(aa$rol, aa$sp, mean)
+tapply(aa$rol, aa$sp, sd)
+tapply(aa$rol, aa$sp, min)
+tapply(aa$rol, aa$sp, max)
+
+#Grafika
+hist(aa$rol)
+lines(aa$rol)
+
+#Q-Q plot
+qqnorm(aa$rol)
+qqline(aa$rol)
+
+#Boxplot
+boxplot(aa$rol)
+boxplot(aa$rol~aa$sp)
+
+
+tapply(aa$cbl, aa$sp, mean)
+
+#biplot
+plot(aa$rol~aa$bcb)
+plot(aa$rol~aa$bcb)
+
+#PRidobivanje - nameščanje paketa
+install.packages("ggplot2")
+plot(aa$cbl~aa$bcb)
+ggplot(aa, aes(y=aa$bcb, x=aa$cbl, group=aa$sp, color=aa$sp))+
+  geom_point()+geom_smooth(method = "lm")
+
+############ One-Way ANOVA
+#Raziskovalno vpr. ali se vrste razlikujejo v dolžini lobanje?
+#Ho: vrste se ne razlikujejo
+#Ha: vrste se razlikujejo 
+#postavitev stopnje tveganja: 5% p=o,o5
+#izračun
+
+levels(aa$sp)
+aov<-aov(rol~sp, data = aa)
+summary(aov)
+
+#posteriorni test(tukejev)
+TukeyHSD(aov)
+dinstall.packages("factoextra")
+
+
+#8. VAJE
+
+head(aa)
+head(aa[,2:8])
+
+#podatkovni okvi
+#termin s katerim poredelimo katere poadtke pelemo v multivariatno analizo
+aa.active<-aa[1:173, 2:8]
+head(aa.active)
+
+#izračun PC
+res.pca<-prcomp(aa.active, scale. = TRUE)
+
+#Eigenvalues
+eig.val<-get_eigenvalue(res.pca)
+eig.val
+
+
+#metoda komolca...zberemo št pomembnih komponent
+#graficna predstavitev razlozene varaiance po PC
+fviz_eig(res.pca)
+#kako posamezna surova spr prispeva k tvorbi pc-ja
+
+#korelacija med surovimi spr in PC-ji
+res.var<-get_pca_var(res.pca)
+res.var$coord
+
+
+#Graf korelacije
+fviz_pca_var(res.pca, repel = TRUE)
+
+
+#Grafični rezultat
+#definiramo kat spr z vrstami iz naše aa matrike
+groups<-as.factor(aa$sp[1:173])
+
+#Graf
+fviz_pca_ind(res.pca, col.ind = groups, palette = c(), addEllipses = TRUE, 
+             ellipse.type="confidence", legend.title="vrsta", 
+             repel = TRUE)
+#izvoz PC-jev
+gk<-as.data.frame(res.pca$x)
+head(gk)
+
+#združitev dveh tabel
+
+
+gk_sp<-bind_cols(vrste,gk)
+
+#biplot
+ggplot(gk_sp, aes(x=PC1, y=PC2, group=sp, color=sp))+geom_point()
