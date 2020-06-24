@@ -1,0 +1,30 @@
+#Zemljevid
+#Seznam paketov: ggplot2, ggmap, ggrepel, rworldmap, rgdal
+install.packages("ggmap")
+install.packages("rgdal")
+install.packages("rworldmap")
+
+
+#Range(izrez..območjena katerem delamo)
+
+range(lok$LAT)
+range(lok$LON)
+
+#izbor ozemlja
+
+map.ap<-get_stamenmap(bbox = c(left=7, right=22, bottom=37, top=55),
+
+                                        maptype = "terrain-background", zoom = 5, crop = TRUE)
+map1<-ggmap(map.ap)
+map1
+
+#dodajanje teksta in točk
+
+map2<-map1 + theme(text = element_text(size = 10))
+map3<-map2 + geom_point(aes(LON, LAT, color=sp), data = lok, pch=19, size=3
+                        ) + geom_text_repel(data = lok, 
+        aes(x=LON, y=LAT, label=sp))
+map3
+
+#oznaka osi 
+map4<-map3 + xlab("Geografska dolžina") + ylab("Geograska širina")
