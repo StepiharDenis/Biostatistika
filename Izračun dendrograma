@@ -1,0 +1,15 @@
+#Preverjanje podatkov
+zaa
+head(zaa)
+#pridobitev in instalacijo paketa vega
+install.packages("vegan")
+?vegdist
+
+#Izračun Evklidovih razdalj
+zaa.eu<-vegdist(zaa, method = "euclidean")
+zaa.eu
+
+
+#izračun drevesa
+zaa.eu.drevo<-hclust(zaa.eu, method = "average")
+plot(zaa.eu.drevo, ylab = "Evklidova razdalja")
